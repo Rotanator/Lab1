@@ -1,4 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 
 /* Lab1 – Hitta tal i sträng med tecken
  
@@ -18,10 +18,9 @@ rad med hela strängen, men där delsträngen är markerad i en annan färg.
 
 */
 
-string input = "29535123p48723487597645723645";
-input = "436845320h3343493-43545954934224545393333";
+string input = ObtainUserInput();
 
-double result = 0;
+double sumOfNumbers = 0;
 int processInputIndex = 0;
 
 
@@ -34,23 +33,50 @@ foreach (char c in input)
         // int - index of where numbers start.
         // int - index of where numbers end.
 
-        Tuple<string, int, int>? numbers;
+        Tuple<string, int, int>? numbersData;
 
-        numbers = FindNumberInString(input, c, processInputIndex);
-        if (numbers != null)
+        numbersData = FindNumberInString(input, c, processInputIndex);
+
+        if (numbersData != null)
         {
-            HighlightNumberInInput(input, numbers);
-            result += double.Parse(numbers.Item1);
+            HighlightNumberInInput(input, numbersData);
+            sumOfNumbers += double.Parse(numbersData.Item1);
         }
     }
     processInputIndex++;
 }
 
-Console.WriteLine(result);
+Console.WriteLine();
+Console.WriteLine("Sum of all marked numbers in provided string: " + sumOfNumbers);
+
+string ObtainUserInput()
+{
+    Console.WriteLine("Lab 1 - Hitta tal i sträng med tecken \n\n" +
+        "Skapa en konsollapplikation som tar en textsträng (string) som input. \n" +
+        "Textsträngen ska sedan sökas igenom efter alla delsträngar som är tal som börjar \n" +
+        "och slutar på samma siffra, utan att start/slutsiffran, eller något annat tecken än \n" +
+        "siffror förekommer där emellan. \n\n" +
+        "ex. 3463 är ett korrekt sådant tal, men 34363 är det inte eftersom det finns \n" +
+        "ytterligare en 3:a i talet, förutom start och slutsiffran. Strängar som innehåller \n" +
+        "andra tecken än siffror, t.ex 95a9 är inte heller ett korrekt tal. \n\n" +
+        "Skriv ut och markera varje korrekt delsträng \n\n" +
+        "För varje sådan delsträng som matchar kriteriet ovan ska programmet skriva ut en \n" +
+        "rad med hela strängen, men där delsträngen är markerad i en annan färg. \n\n\n");
+
+    Console.WriteLine("Tryck valfri knapp för att fortsätta");
+    Console.ReadKey();
+    Console.Clear();
+    Console.Write("Provide a string to process: ");
+
+    string input = Console.ReadLine();
+    Console.Clear();
+
+    return input;
+}
 
 Tuple<string, int, int>? FindNumberInString(string inputString, char startingChar, int startingCharIndexStart)
 {
-    string result = String.Empty;
+    string numbersResult = String.Empty;
 
     int startingCharOccurence = 0;
     int startingCharIndexEnd = 0;
@@ -62,12 +88,11 @@ Tuple<string, int, int>? FindNumberInString(string inputString, char startingCha
         if (startingCharOccurence >= 2 || char.IsDigit(c) == false )
         {
             break;
-
         } else
         {
             if (c == startingChar && startingCharOccurence < 2)
             {
-                result += c;
+                numbersResult += c;
                 startingCharOccurence++;
 
                 if (startingCharOccurence == 2)
@@ -77,7 +102,7 @@ Tuple<string, int, int>? FindNumberInString(string inputString, char startingCha
             }
             else if (startingCharOccurence == 1)
             {
-                result += c;
+                numbersResult += c;
             }
         }
     }
@@ -87,33 +112,30 @@ Tuple<string, int, int>? FindNumberInString(string inputString, char startingCha
         return null;
     } else
     {
-        return Tuple.Create(result, startingCharIndexStart, startingCharIndexEnd);
+        return Tuple.Create(numbersResult, startingCharIndexStart, startingCharIndexEnd);
     }
     
 }
 
-void HighlightNumberInInput(string input, Tuple<string, int, int>? numbers)
+void HighlightNumberInInput(string input, Tuple<string, int, int>? numbersData)
 {
-    int startingCharIndexStart = numbers.Item2;
-    int startingCharIndexEnd = numbers.Item3;
+    int startingCharIndexStart = numbersData.Item2;
+    int startingCharIndexEnd = numbersData.Item3;
 
     for (int i = 0; i < input.Length; i++)
     {
-        char c = input[i];
-        char startingChar = input[startingCharIndexStart];
+        char currentChar = input[i];
 
         if (i >= startingCharIndexStart && i <= startingCharIndexEnd)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(input[i]);
+            Console.Write(currentChar);
         } else
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write(input[i]);
+            Console.Write(currentChar);
         }
     }
     Console.ForegroundColor = ConsoleColor.Gray;
     Console.WriteLine();
 }
-
-Console.ReadKey();
